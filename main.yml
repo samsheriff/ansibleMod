@@ -6,10 +6,11 @@
   - name: get os dist
     register: os_distribution
     distro: >
-          os_type='linux'
-          postfix='_2016'
-
+      os_type='linux'
+      postfix='2016'
 
   - name: create files
     register: create_files
-    file: path="/home/vagrant/{{ distro.filename }}" state=touch
+    file: >
+      path="/home/vagrant/{{ os_distribution.filename }}"
+      state=touch
