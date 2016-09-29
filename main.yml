@@ -1,0 +1,13 @@
+---
+- hosts: all
+  remote_user: vagrant
+
+  tasks:
+  - name: get os dist
+    register: os_distribution
+    distro: os_type='linux' postfix='_2016'
+
+
+  - name: create files
+    register: create_files
+    file: path="/home/vagrant/{{ distro.filename }}" state=touch
