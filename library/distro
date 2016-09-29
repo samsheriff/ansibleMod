@@ -22,6 +22,9 @@ import os
 import sys
 
 
+def get_dist():
+    return "_".join(platform.dist()).replace(" ", "-")
+
 # ---------------
 # Begin Mainline
 
@@ -48,11 +51,14 @@ def main():
             rc=0
         )
 
-        node_os = module.params['os_type']
-        os_dist = platform.dist()
-        os_full_name = "_".join(os_dist).replace(" ", "-")
+        if module.params['os_type'] != 'linux':
+            raise Exception("Module currently supports Linux dists only.")
+
+        os_full_name = get_dist()
+
         if module.params['postfix']:
             os_full_name += module.params['postfix']
+
         results['filename'] = os_full_name
 
         results['rc'] = 0
