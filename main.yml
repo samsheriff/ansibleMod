@@ -7,7 +7,7 @@
     register: os_distribution
     distro: >
       os_type='linux'
-      postfix='2016'
+      postfix='_2016'
 
   - name: create files
     register: create_files
