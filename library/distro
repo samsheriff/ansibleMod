@@ -1,0 +1,79 @@
+#!/usr/bin/python
+
+""" Documentation """
+
+DOCUMENTATION = """
+File name: distro
+
+Purpose: Ansible Module that returns target node's OS Distribution"""
+
+EXAMPLE = """
+---
+- name: get os dist
+  register: os_distribution
+  distro: >
+    os_type='linux'
+    postfix='2016'
+"""
+
+import datetime
+import platform
+import os
+import sys
+
+
+# ---------------
+# Begin Mainline
+
+
+def main():
+    start = datetime.datetime.now()
+
+    module = AnsibleModule(
+        argument_spec=dict(
+            os_type=dict(required=False,
+                         type='str',
+                         choices=['linux', 'bsd', 'win'],
+                         default='linux'),
+            postfix=dict(required=False)
+        )
+    )
+
+    try:
+        results = dict(
+            filename=None,
+            changed=False,
+            module_params=module.params,
+            start=str(start),
+            rc=0
+        )
+
+        node_os = module.params['os_type']
+        os_dist = platform.dist()
+        os_full_name = "_".join(os_dist).replace(" ", "-")
+        if module.params['postfix']:
+            os_full_name += module.params['postfix']
+        results['filename'] = os_full_name
+
+        results['rc'] = 0
+
+    except Exception, e:
+        results['ExceptionHandlerError'] = "If you see this text, there was an error in the Exception Handler."
+        results['warnings'] = str(e).splitlines()
+        results['msg'] = results['warnings'][0]
+        results['failed'] = True
+        results['rc'] = 1
+        del results['ExceptionHandlerError']
+    finally:
+        end = datetime.datetime.now()
+        delta = end - start
+        results['end'] = str(end)
+        results['delta'] = str(delta)
+        print json.dumps(results)
+        sys.exit(results['rc'])
+
+
+from ansible.module_utils.basic import *
+
+if __name__ == '__main__':
+    main()
